@@ -6,7 +6,10 @@ const { graphqlHTTP } = require('express-graphql');
 // coverts the string to javascript object
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs')
 const Event = require('./models/event.js')
+const User = require('./models/user.js')
+
 
 app.use(express.json());
 
@@ -33,6 +36,12 @@ app.use('/graphql',
             date: String
         }
 
+        type User{
+            _id: ID!
+            email: String!
+            password: String
+        }
+
         input EventInput{
             title: String!
             description: String!
@@ -40,12 +49,18 @@ app.use('/graphql',
             date: String
         }
 
+        input UserInput{
+            email: String!
+            password: String!
+        }
+
         type RootQuery{
             events: [Event!]!
         }
 
         type RootMutation{
-            createEvent(EventInput:EventInput):Event
+            createEvent(EventInput:EventInput): Event
+            createUser(UserInput:UserInput): User
         }
 
         schema {
@@ -73,18 +88,51 @@ app.use('/graphql',
                 // events.push(event)
                 // return event
                 const event = new Event({
-                    ...args.EventInput
+                    ...args.EventInput,
+                    creator: '607e69225140c145c05630e5'
                 })
+                let createdEvent;
                 return event
                     .save()
                     .then((res) => {
-                        console.log(res)
-                        return { ...res._doc };
+                        createdEvent = { ...args.EventInput }
+                        return User.findById('607e69225140c145c05630e5')
+                    })
+                    .then((user) => {
+                        if (user) {
+
+                        }
+                        user.createdEvents.push(event)
+                        return user.save()
+                    })
+                    .then(result => {
+                        return createdEvent;
                     })
                     .catch((error) => {
                         console.log(error)
                         throw error
                     })
+            },
+            createUser: args => {
+                return User.findOne({ email: args.UserInput.email })
+                    .then((user) => {
+                        if (user) {
+                            throw new Error('User exists already.')
+                        }
+                        return bcrypt
+                            .hash(args.UserInput.password, 12)
+                    })
+                    .then((hashedPassword => {
+                        const user = new User({
+                            email: args.UserInput.email,
+                            password: hashedPassword
+                        })
+                        return user.save()
+                    }))
+                    .then((result) => {
+                        return { ...result._doc, password: null, _id: result.id }
+                    })
+                    .catch(err => { throw err })
             }
         },
         // Access the api interface
