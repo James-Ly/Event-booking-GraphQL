@@ -5,8 +5,8 @@ const { graphqlHTTP } = require('express-graphql');
 // function that take javascript string to build our schema
 // coverts the string to javascript object
 const { buildSchema } = require('graphql');
-
-const events = [];
+const mongoose = require('mongoose');
+const Event = require('./models/event.js')
 
 app.use(express.json());
 
@@ -55,15 +55,36 @@ app.use('/graphql',
     `),
         rootValue: {
             events: () => {
-                return events
+                return Event.find()
+                    .then(events => {
+                        return events.map((event) => {
+                            return { ...event._doc, _id: event._doc._id.toString() }
+                        })
+                    })
+                    .catch((error) => {
+                        throw error
+                    })
             },
             createEvent: (args) => {
-                const event = {
-                    ...args.EventInput,
-                    _id: Math.random().toString(),
-                }
-                events.push(event)
+                // const event = {
+                //     ...args.EventInput,
+                //     _id: Math.random().toString(),
+                // }
+                // events.push(event)
+                // return event
+                const event = new Event({
+                    ...args.EventInput
+                })
                 return event
+                    .save()
+                    .then((res) => {
+                        console.log(res)
+                        return { ...res._doc };
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                        throw error
+                    })
             }
         },
         // Access the api interface
@@ -74,6 +95,15 @@ app.get('/', (req, res, next) => {
     res.send('Hello World!');
 });
 
-app.listen(3000, () => {
-    console.log('Server is up and listening in port 3000');
-});
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.zsh3x.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`)
+    .then(() => {
+        app.listen(3000, () => {
+            console.log('Server is up and listening in port 3000');
+        });
+    })
+    .catch((error) => {
+        console.log(error)
+    })
+
+
+
