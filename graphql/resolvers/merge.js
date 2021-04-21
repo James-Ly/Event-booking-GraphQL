@@ -5,7 +5,6 @@ const { dateToString } = require('../../helpers/date')
 const event = async eventIds => {
     try {
         const events = await Event.find({ _id: { $in: eventIds } })
-        console.log('events', events)
         return events.map(event => {
             return transformEvent(event)
         })

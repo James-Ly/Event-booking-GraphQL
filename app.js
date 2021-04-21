@@ -9,14 +9,12 @@ const mongoose = require('mongoose');
 const graphQlSchema = require('./graphql/schema/index')
 const graphQlResolvers = require('./graphql/resolvers/index')
 const { graphqlHTTP } = require('express-graphql');
-
+const isAuth = require('./middleware/is-auth');
 
 app.use(express.json());
 
 // two-way binding
-
-
-
+app.use(isAuth)
 /*************  ***********/
 // Where do I find your schema: schema property
 // Where do I find the resolver which my request will be forwarded:
