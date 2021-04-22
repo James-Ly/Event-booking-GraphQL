@@ -23,7 +23,7 @@ module.exports = {
         try {
             const fetchedEvent = await Event.findOne({ _id: args.EventId })
             const booking = new Booking({
-                user: '607ec25c28318819fc2779ab',
+                user: '6080be0aa342cd137cb14725',
                 eventId: fetchedEvent
             })
             const result = await booking.save()

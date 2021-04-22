@@ -20,11 +20,11 @@ module.exports = {
         try {
             const event = new Event({
                 ...args.EventInput,
-                creator: '607ec25c28318819fc2779ab'
+                creator: '6080be0aa342cd137cb14725'
             })
             const res = await event.save()
             const createdEvent = transformEvent(res)
-            const creator = await User.findById('607ec25c28318819fc2779ab')
+            const creator = await User.findById('6080be0aa342cd137cb14725')
             if (!creator) {
                 throw new Error('User not found.')
             }
