@@ -27,7 +27,7 @@ class App extends Component {
       <BrowserRouter>
         <AuthContext.Provider value={{
           token: this.state.token,
-          userId: this.state.token,
+          userId: this.state.userId,
           login: this.login,
           logout: this.logout
         }}>
