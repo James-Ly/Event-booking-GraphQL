@@ -31,7 +31,6 @@ module.exports = buildSchema(`
             tokenExpiration: Int!
         }
 
-
         input EventInput{
             title: String!
             description: String!

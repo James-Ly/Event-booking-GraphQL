@@ -4,7 +4,7 @@ import './MainNavigation.css'
 
 const MainNavigation = (props) => {
     return (
-        <header class='main-navigation'>
+        <header className='main-navigation'>
             <div className='main-navigation__logo'>
                 <h1>EasyEvent</h1>
             </div>

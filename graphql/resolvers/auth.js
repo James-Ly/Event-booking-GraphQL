@@ -6,7 +6,7 @@ module.exports = {
     createUser: async args => {
         try {
             let user = await User.findOne({ email: args.UserInput.email })
-            if (!user) {
+            if (user) {
                 throw new Error('User exists already.')
             }
             const hashedPassword = await bcrypt.hash(args.UserInput.password, 12)
@@ -31,7 +31,7 @@ module.exports = {
             if (!isEqual) {
                 throw new Error('Password is incorrect')
             }
-            const token = jwt.sign({ userId: user.id, email: user.email }, 'somesupersecretkey', {
+            const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET, {
                 expiresIn: '1h'
             })
             return { userId: user.id, token: token, tokenExpiration: 1 }
