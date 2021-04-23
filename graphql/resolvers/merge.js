@@ -45,7 +45,11 @@ const singleEvent = async eventId => {
 const user = async userId => {
     try {
         const user = await userLoader.load(userId.toString())
-        return { ...user._doc, _id: user.id, createdEvents: event.bind(this, user.createdEvents) }
+        return {
+            ...user._doc,
+            _id: user.id,
+            createdEvents: () => eventLoader.loadMany(user._doc.createdEvents)
+        }
     } catch (err) {
         throw err
     }
@@ -63,7 +67,7 @@ const transformEvent = event => {
 const transformBooking = booking => {
     return {
         ...booking._doc,
-        _id: booking._doc._id,
+        _id: booking._id,
         user: user.bind(this, booking.user),
         event: singleEvent.bind(this, booking.eventId),
         createdAt: dateToString(booking._doc.createdAt),
