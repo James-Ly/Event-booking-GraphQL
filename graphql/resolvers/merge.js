@@ -1,6 +1,26 @@
+const DataLoader = require('dataloader');
 const Event = require('../../models/event')
 const User = require('../../models/user')
-const { dateToString } = require('../../helpers/date')
+const { dateToString } = require('../../helpers/date');
+const { events } = require('../../models/event');
+
+/**
+     * DataLoader to fetch the events from the database
+     * @param {[String]} eventIds an array of eventIds received from the request
+     * @return {[Object]} list of events
+     */
+const eventLoader = new DataLoader((eventIds) => {
+    return event(eventIds)
+});
+
+/**
+     * DataLoader to fetch the users from the database
+     * @param {[String]} userIds an array of userIds received from the request
+     * @return {[Object]} list of users
+     */
+const userLoader = new DataLoader((userIds) => {
+    return User.find({ _id: { $in: userIds } })
+})
 
 const event = async eventIds => {
     try {
@@ -15,8 +35,8 @@ const event = async eventIds => {
 
 const singleEvent = async eventId => {
     try {
-        const event = await Event.findById(eventId);
-        return transformEvent(event)
+        const event = await eventLoader.load(eventId.toString());
+        return event
     } catch (error) {
         throw error
     }
@@ -24,7 +44,7 @@ const singleEvent = async eventId => {
 
 const user = async userId => {
     try {
-        const user = await User.findById(userId)
+        const user = await userLoader.load(userId.toString())
         return { ...user._doc, _id: user.id, createdEvents: event.bind(this, user.createdEvents) }
     } catch (err) {
         throw err
