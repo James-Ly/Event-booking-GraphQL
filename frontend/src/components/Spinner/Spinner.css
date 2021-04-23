@@ -1,8 +1,17 @@
+.spinner-wrapper {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+}
+
 .lds-hourglass {
     display: inline-block;
     position: relative;
     width: 80px;
     height: 80px;
+    margin: 0;
 }
 
 .lds-hourglass:after {
@@ -13,8 +22,8 @@
     height: 0;
     margin: 8px;
     box-sizing: border-box;
-    border: 32px solid #fff;
-    border-color: #fff transparent #fff transparent;
+    border: 32px solid #5101d1;
+    border-color: #5101d1 transparent #5101d1 transparent;
     animation: lds-hourglass 1.2s infinite;
 }
 
