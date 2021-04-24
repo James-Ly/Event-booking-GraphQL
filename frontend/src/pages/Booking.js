@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import AuthContext from '../context/auth-context'
 import Spinner from '../components/Spinner/Spinner'
 import BookingList from '../components/Bookings/BookingList/BookingList'
+import BookingsChart from '../components/Bookings/BookingChart/BookingChart'
+import BookingControl from '../components/Bookings/BookingControl/BookingControl'
 
 class BookingPage extends Component {
     state = {
         isLoading: false,
-        bookings: []
+        bookings: [],
+        outputType: 'list'
     }
 
     static contextType = AuthContext
@@ -26,6 +29,7 @@ class BookingPage extends Component {
                         _id
                         title
                         date
+                        price
                     }
                 }
             }
@@ -104,12 +108,34 @@ class BookingPage extends Component {
         this.fetchBookings()
     }
 
+    changeOutputTypeHandler = (outputType) => {
+        if (outputType === 'list') {
+            this.setState({ outputType: 'list' })
+        } else {
+            this.setState({ outputType: 'chart' })
+        }
+    }
+
     render() {
+        let content = <Spinner />;
+        if (!this.state.isLoading) {
+            content = (
+                <React.Fragment>
+                    <BookingControl activeOutputType={this.state.outputType}
+                        onChange={this.changeOutputTypeHandler} />
+                    <div>
+                        {this.state.outputType === 'list' ?
+                            <BookingList bookings={this.state.bookings} onDelete={this.deleteBookingHandler} /> :
+                            <BookingsChart bookings={this.state.bookings} />}
+                    </div>
+                </React.Fragment>
+            )
+        }
         return (
             <React.Fragment>
                 {this.state.isLoading ? <Spinner /> :
                     <ul>
-                        <BookingList bookings={this.state.bookings} onDelete={this.deleteBookingHandler} />
+                        {content}
                     </ul>
                 }
             </React.Fragment>
