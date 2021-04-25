@@ -4,6 +4,9 @@ const authResolver = require('./auth')
 const eventsResolver = require('./events')
 const bookingResolver = require('./booking')
 
+/**
+     * Consolidate all the resolvers and export to the app.js
+     */
 const rootResolver = {
     ...authResolver,
     ...eventsResolver,

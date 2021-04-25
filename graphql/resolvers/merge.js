@@ -5,7 +5,7 @@ const { dateToString } = require('../../helpers/date');
 const { events } = require('../../models/event');
 
 /**
-     * DataLoader to fetch the events from the database
+     * DataLoader to fetch the events from the database.
      * @param {[String]} eventIds an array of eventIds received from the request
      * @return {[Object]} list of events
      */
@@ -14,7 +14,7 @@ const eventLoader = new DataLoader((eventIds) => {
 });
 
 /**
-     * DataLoader to fetch the users from the database
+     * DataLoader to fetch the users from the database.
      * @param {[String]} userIds an array of userIds received from the request
      * @return {[Object]} list of users
      */
@@ -38,6 +38,12 @@ const event = async eventIds => {
     }
 }
 
+/**
+     * Function to query data of a single Event from the database.
+     * Uses dataloader to retrieve data.
+     * @param {eventId} id of an event
+     * @return {Object} an event from the database
+     */
 const singleEvent = async eventId => {
     try {
         const event = await eventLoader.load(eventId.toString());
@@ -47,6 +53,12 @@ const singleEvent = async eventId => {
     }
 }
 
+/**
+     * Function to retrieve a single user with userId.
+     * Using eventLoader loadMany to get all the events this user has created.
+     * @param {userId} userId a String which indicates the id of a user
+     * @return {Object} a user from the database
+     */
 const user = async userId => {
     try {
         const user = await userLoader.load(userId.toString())
@@ -60,6 +72,11 @@ const user = async userId => {
     }
 }
 
+/**
+     * Function to transform add the creator object and transform the date field to a more readable format
+     * @param {Object} userIds an array of userIds received from the request
+     * @return {[Object]} list of users
+     */
 const transformEvent = event => {
     return {
         ...event._doc,
@@ -69,6 +86,12 @@ const transformEvent = event => {
     }
 }
 
+/**
+     * Function to transform createdAt and updatedAt fields to more readable format
+     * Add user and event object that are related to this specific booking.
+     * @param {[String]} userIds an array of userIds received from the request
+     * @return {[Object]} list of users
+     */
 const transformBooking = booking => {
     return {
         ...booking._doc,
@@ -80,8 +103,5 @@ const transformBooking = booking => {
     }
 }
 
-// exports.user = user
-// exports.event = event
-// exports.singleEvent = singleEvent
 exports.transformEvent = transformEvent
 exports.transformBooking = transformBooking

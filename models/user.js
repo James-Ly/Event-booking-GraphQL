@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 
-
 // Identify which user creates which event
 // ref: set up relation, let mongoose know those data are related.
 const userSchema = new Schema({

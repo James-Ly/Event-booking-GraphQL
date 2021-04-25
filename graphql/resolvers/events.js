@@ -3,6 +3,11 @@ const User = require('../../models/user')
 const { transformEvent } = require('./merge')
 
 module.exports = {
+    /**
+     * Resolver to fetch events data from the database
+     * @param {None} 
+     * @return {[Object]} a list of events that have been transformed (see more in merge.js)
+     */
     events: async () => {
         try {
             const events = await Event.find()
@@ -13,6 +18,12 @@ module.exports = {
             throw error
         }
     },
+    /**
+     * Resolver to create and save a new Event to the database
+     * @param {Object} args.EventInput a simple construct of an Event
+     * @param {Object} req.isAuth Check whether the user has logged in as this feature is only accessible to user
+     * @return {Object} The event that has been created
+     */
     createEvent: async (args, req) => {
         if (!req.isAuth) {
             throw new Error('Unauthenticated')
