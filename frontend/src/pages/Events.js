@@ -4,14 +4,18 @@ import Backdrop from '../components/Backdrop/Backdrop'
 import AuthContext from '../context/auth-context.js'
 import EventList from '../components/Events/EventList/EventList'
 import Spinner from '../components/Spinner/Spinner'
+import EventControl from '../components/Events/EventControl/EventControl'
 import './Events.css'
 
 class EventsPage extends Component {
     state = {
         creating: false,
         events: [],
+        bookedEvents: [],
+        createdEvents: [],
         isLoading: false,
-        selectedEvent: null
+        selectedEvent: null,
+        outputType: 'events'
     }
     isActive = true
 
@@ -129,9 +133,26 @@ class EventsPage extends Component {
             return res.json()
         }).then(resData => {
             const events = resData.data.events;
-            console.log(events)
+            const bookedEvents = []
+            let createdEvents = []
+            const otherEvents = []
+            events.forEach(event => {
+                if (event.bookedUser) {
+                    bookedEvents.push(event)
+                } else if (event.creator._id === this.context.userId) {
+                    createdEvents.push(event)
+                } else {
+                    otherEvents.push(event)
+                }
+            })
             if (this.isActive) {
-                this.setState({ ...this.state, events: events, isLoading: false })
+                this.setState({
+                    ...this.state,
+                    events: otherEvents,
+                    bookedEvents: bookedEvents,
+                    createdEvents: createdEvents,
+                    isLoading: false
+                })
             }
         }).catch(err => {
             console.log(err)
@@ -140,6 +161,7 @@ class EventsPage extends Component {
             }
         })
     }
+
     componentDidMount() {
         this.fetchEvents()
     }
@@ -196,7 +218,23 @@ class EventsPage extends Component {
         this.isActive = false
     }
 
+    changeOutputTypeHandler = (outputType) => {
+        if (outputType === 'events') {
+            this.setState({ outputType: 'events' })
+        } else if (outputType === 'created') {
+            this.setState({ outputType: 'created' })
+        } else if (outputType === 'booked') {
+            this.setState({ outputType: 'booked' })
+        }
+    }
+
     render() {
+        let events = this.state.events;
+        if (this.state.outputType === 'created') {
+            events = this.state.createdEvents
+        } else if (this.state.outputType === 'booked') {
+            events = this.state.bookedEvents
+        }
         return (
             <React.Fragment>
                 {(this.state.creating || this.state.selectedEvent) && <Backdrop onClick={this.modalCancelHandler} />}
@@ -232,6 +270,8 @@ class EventsPage extends Component {
                     <p>Shared your own Events!</p>
                     <button className='btn' onClick={this.startCreateEventHandler}>Create Event</button>
                 </div>}
+                <EventControl activeOutputType={this.state.outputType}
+                    onChange={this.changeOutputTypeHandler} />
                 {this.state.selectedEvent && <Modal
                     title={this.state.selectedEvent.title}
                     canCancel={true}
@@ -246,9 +286,10 @@ class EventsPage extends Component {
                 </Modal>}
                 {
                     this.state.isLoading ? <Spinner /> : <EventList
-                        events={this.state.events}
+                        events={events}
                         authUserId={this.context.userId}
                         onViewDetail={this.showDetailHandler}
+                        outputType={this.state.outputType}
                     />
                 }
             </React.Fragment >

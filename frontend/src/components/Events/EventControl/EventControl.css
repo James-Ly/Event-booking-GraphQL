@@ -1,0 +1,22 @@
+.events-control {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.events-control button {
+    font: inherit;
+    border: none;
+    background: transparent;
+    color: black;
+    padding: 0.25rem 3rem;
+    border-bottom: 2px solid transparent;
+}
+
+.events-control button.active {
+    border-bottom-color: #5101d1;
+    color: #5101d1;
+}
+
+.events-control button:focus {
+    outline: none;
+}
