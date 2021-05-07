@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 
-// Identify which user creates which event
-// ref: set up relation, let mongoose know those data are related.
+/***  
+ * userSchema with four main attributes:
+ * 1. email <String> required: Email of the user
+ * 2. password <String> required: Password of the user
+ * 3. createdEvents [Array<String>]: Events that have been created by this user
+***/
 const userSchema = new Schema({
     email: {
         type: String,
@@ -20,4 +24,4 @@ const userSchema = new Schema({
     ]
 })
 
-module.exports = mongoose.model('User',userSchema)
+module.exports = mongoose.model('User', userSchema)

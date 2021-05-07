@@ -16,6 +16,7 @@ module.exports = buildSchema(`
             price: Float!
             date: String!
             creator: User!
+            bookedUsers: [User!]
         }
 
         type User{

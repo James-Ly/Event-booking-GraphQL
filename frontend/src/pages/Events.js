@@ -42,6 +42,7 @@ class EventsPage extends Component {
         if (title.trim().length === 0 || price <= 0 || date.trim().length === 0 || description.trim().length === 0) {
             return;
         }
+        /* Create the request body for querying all events */
         const requestBody = {
             query: `
             mutation CreateEvent($title:String!,$description:String!,$price:Float!,$date:String!){
@@ -108,6 +109,9 @@ class EventsPage extends Component {
                         _id
                         email
                     }
+                    bookedUsers{
+                        _id
+                    }
                 }
             }
             `
@@ -125,6 +129,7 @@ class EventsPage extends Component {
             return res.json()
         }).then(resData => {
             const events = resData.data.events;
+            console.log('Fetched events', events)
             if (this.isActive) {
                 this.setState({ ...this.state, events: events, isLoading: false })
             }

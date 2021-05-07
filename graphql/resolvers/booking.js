@@ -1,5 +1,6 @@
 const Booking = require('../../models/booking')
 const Event = require('../../models/event')
+const User = require('../../models/user')
 const { transformBooking, transformEvent } = require('./merge')
 
 module.exports = {
@@ -39,11 +40,17 @@ module.exports = {
         }
         try {
             const fetchedEvent = await Event.findOne({ _id: args.EventId })
+            const currentUser = await User.findById(req.userId)
+            if (!currentUser) {
+                throw new Error('User not found')
+            }
             const booking = new Booking({
                 user: req.userId,
                 eventId: fetchedEvent
             })
             const result = await booking.save()
+            fetchedEvent.bookedUsers.push(currentUser)
+            await fetchedEvent.save()
             return transformBooking(result)
         } catch (error) {
             throw error

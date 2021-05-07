@@ -34,7 +34,7 @@ app.use('/graphql',
         graphiql: true
     }));
 
-mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.zsh3x.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`)
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@james.ytf8l.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`)
     .then(() => {
         app.listen(process.env.PORT, () => {
             console.log('Server is up and listening in port ' + process.env.PORT);

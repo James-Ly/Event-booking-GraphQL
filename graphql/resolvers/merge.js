@@ -82,7 +82,8 @@ const transformEvent = event => {
         ...event._doc,
         _id: event.id,
         date: dateToString(event._doc.date),
-        creator: user.bind(this, event.creator)
+        creator: user.bind(this, event.creator),
+        bookedUsers: () => userLoader.loadMany(event.bookedUsers)
     }
 }
 
