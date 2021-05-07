@@ -96,6 +96,7 @@ class EventsPage extends Component {
 
     fetchEvents() {
         this.setState({ isLoading: true })
+        const token = this.context.token
         const requestBody = {
             query: `
             query{
@@ -109,9 +110,7 @@ class EventsPage extends Component {
                         _id
                         email
                     }
-                    bookedUsers{
-                        _id
-                    }
+                    bookedUser
                 }
             }
             `
@@ -121,6 +120,7 @@ class EventsPage extends Component {
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bear ' + token
             }
         }).then(res => {
             if (res.status !== 200 && res.status !== 201) {
@@ -129,7 +129,7 @@ class EventsPage extends Component {
             return res.json()
         }).then(resData => {
             const events = resData.data.events;
-            console.log('Fetched events', events)
+            console.log(events)
             if (this.isActive) {
                 this.setState({ ...this.state, events: events, isLoading: false })
             }

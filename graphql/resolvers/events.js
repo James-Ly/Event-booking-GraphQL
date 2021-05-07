@@ -8,11 +8,11 @@ module.exports = {
      * @param {None} 
      * @return {[Object]} a list of events that have been transformed (see more in merge.js)
      */
-    events: async () => {
+    events: async (args,req) => {
         try {
             const events = await Event.find()
             return events.map((event) => {
-                return transformEvent(event)
+                return transformEvent(event,req.userId)
             })
         } catch (error) {
             throw error

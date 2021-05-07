@@ -77,13 +77,24 @@ const user = async userId => {
      * @param {Object} userIds an array of userIds received from the request
      * @return {[Object]} list of users
      */
-const transformEvent = event => {
+const transformEvent = async (event, userId = null) => {
+    let isBookedUser = true
+    if (userId) {
+        const bookedUsersId_list = event.bookedUsers.map(bookedUser => {
+            return bookedUser._id
+        })
+        const bookedUsers = await User.find({ _id: { $in: bookedUsersId_list } })
+        const bookedUsers_idList = bookedUsers.map(bookedUser => {
+            return JSON.stringify(bookedUser._id)
+        })
+        isBookedUser = bookedUsers_idList.includes(JSON.stringify(userId))
+    }
     return {
         ...event._doc,
         _id: event.id,
         date: dateToString(event._doc.date),
         creator: user.bind(this, event.creator),
-        bookedUsers: () => userLoader.loadMany(event.bookedUsers)
+        bookedUser: isBookedUser
     }
 }
 
