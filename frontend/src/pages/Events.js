@@ -89,10 +89,11 @@ class EventsPage extends Component {
             }
             return res.json()
         }).then(resData => {
-            const event = resData.data.createEvent;
-            const events = [...this.state.events]
-            events.push({ ...event, userId: this.context.userId })
-            this.setState({ ...this.state, events: events })
+            console.log(resData.data)
+            const createdEvent = resData.data.createEvent;
+            const createdEvents = [...this.state.createdEvents]
+            createdEvents.push({ ...createdEvent, userId: this.context.userId })
+            this.setState({ ...this.state, createdEvents: createdEvents })
         }).catch(err => {
             console.log(err)
         })
@@ -186,6 +187,9 @@ class EventsPage extends Component {
                   _id
                   createdAt
                   updatedAt
+                  event{
+                      _id
+                  }
                 }
               }
             `,
@@ -206,8 +210,18 @@ class EventsPage extends Component {
             }
             return res.json()
         }).then(resData => {
-            console.log(resData)
-            this.setState({ isLoading: false, selectedEvent: null })
+            console.log(resData.data)
+            const bookedEvents = [... this.state.bookedEvents]
+            const events = [... this.state.events]
+            const newEvents = []
+            events.forEach(event => {
+                if (event._id === resData.data.bookEvent.event._id) {
+                    bookedEvents.push(event)
+                } else {
+                    newEvents.push(event)
+                }
+            })
+            this.setState({ isLoading: false, selectedEvent: null, bookedEvents: bookedEvents, events: newEvents })
         }).catch(err => {
             console.log(err)
             this.setState({ isLoading: false })
