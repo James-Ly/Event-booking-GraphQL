@@ -50,6 +50,7 @@ module.exports = {
             })
             const result = await booking.save()
             fetchedEvent.bookedUsers.push(currentUser)
+            await fetchedEvent.save()
             return transformBooking(result)
         } catch (error) {
             throw error

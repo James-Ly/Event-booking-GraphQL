@@ -7,7 +7,7 @@ const eventItem = props => {
     </div>)
     if (props.outputType === 'created') {
         details = <div>
-            <p>You created this event</p>
+            <button className='btn' onClick={props.onDelete.bind(this, props.eventId)}>Delete Event</button>
         </div>
     } else if (props.outputType === 'booked') {
         details = <div>

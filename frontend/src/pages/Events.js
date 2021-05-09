@@ -89,7 +89,6 @@ class EventsPage extends Component {
             }
             return res.json()
         }).then(resData => {
-            console.log(resData.data)
             const createdEvent = resData.data.createEvent;
             const createdEvents = [...this.state.createdEvents]
             createdEvents.push({ ...createdEvent, userId: this.context.userId })
@@ -133,6 +132,7 @@ class EventsPage extends Component {
             }
             return res.json()
         }).then(resData => {
+            console.log('Events',resData.data.events)
             const events = resData.data.events;
             const bookedEvents = []
             let createdEvents = []
@@ -160,6 +160,44 @@ class EventsPage extends Component {
             if (this.isActive) {
                 this.setState({ isLoading: false })
             }
+        })
+    }
+
+    deleteEvent = (eventId) => {
+        /* Create the request body for deleting event */
+        const requestBody = {
+            query: `
+            mutation CancelEvent($id:ID!){
+                cancelEvent(EventId:$id){
+                    _id
+                    title
+                    description
+                    date
+                    price
+                }
+            }
+            `,
+            variables: {
+                id: eventId
+            }
+        }
+        const token = this.context.token
+        fetch('http://localhost:8000/graphql', {
+            method: 'POST',
+            body: JSON.stringify(requestBody),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bear ' + token
+            }
+        }).then(res => {
+            if (res.status !== 200 && res.status !== 201) {
+                throw new Error('Failed!')
+            }
+            return res.json()
+        }).then(resData => {
+            console.log(resData.data)
+        }).catch(err => {
+            console.log(err)
         })
     }
 
@@ -210,9 +248,8 @@ class EventsPage extends Component {
             }
             return res.json()
         }).then(resData => {
-            console.log(resData.data)
-            const bookedEvents = [... this.state.bookedEvents]
-            const events = [... this.state.events]
+            const bookedEvents = [...this.state.bookedEvents]
+            const events = [...this.state.events]
             const newEvents = []
             events.forEach(event => {
                 if (event._id === resData.data.bookEvent.event._id) {
@@ -249,6 +286,7 @@ class EventsPage extends Component {
         } else if (this.state.outputType === 'booked') {
             events = this.state.bookedEvents
         }
+        console.log(this.state.events, this.state.createdEvents, this.state.bookedEvents)
         return (
             <React.Fragment>
                 {(this.state.creating || this.state.selectedEvent) && <Backdrop onClick={this.modalCancelHandler} />}
@@ -304,6 +342,7 @@ class EventsPage extends Component {
                         authUserId={this.context.userId}
                         onViewDetail={this.showDetailHandler}
                         outputType={this.state.outputType}
+                        onDeleteEvent={this.deleteEvent}
                     />
                 }
             </React.Fragment >
