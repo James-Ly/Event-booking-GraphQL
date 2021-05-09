@@ -13,7 +13,6 @@ const bookingsChart = props => {
     for (const bucket in BOOKINGS_BUCKETS) {
         const filteredBookingsCount = props.bookings.reduce((prev, current) => {
             if (BOOKINGS_BUCKETS[bucket].min < parseFloat(current.event.price) && parseFloat(current.event.price) <= BOOKINGS_BUCKETS[bucket].max) {
-                console.log('comparison', current.event.price, BOOKINGS_BUCKETS[bucket].max)
                 return prev + 1;
             } else {
                 return prev;

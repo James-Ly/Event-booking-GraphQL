@@ -132,7 +132,6 @@ class EventsPage extends Component {
             }
             return res.json()
         }).then(resData => {
-            console.log('Events',resData.data.events)
             const events = resData.data.events;
             const bookedEvents = []
             let createdEvents = []
@@ -195,7 +194,13 @@ class EventsPage extends Component {
             }
             return res.json()
         }).then(resData => {
-            console.log(resData.data)
+            const createdEvents = [...this.state.createdEvents].filter(event => {
+                return !(JSON.stringify(event._id) === JSON.stringify(resData.data.cancelEvent._id))
+            })
+            this.setState({
+                ...this.state,
+                createdEvents: createdEvents,
+            })
         }).catch(err => {
             console.log(err)
         })
@@ -286,7 +291,6 @@ class EventsPage extends Component {
         } else if (this.state.outputType === 'booked') {
             events = this.state.bookedEvents
         }
-        console.log(this.state.events, this.state.createdEvents, this.state.bookedEvents)
         return (
             <React.Fragment>
                 {(this.state.creating || this.state.selectedEvent) && <Backdrop onClick={this.modalCancelHandler} />}
