@@ -70,9 +70,12 @@ module.exports = {
         }
         try {
             const booking = await Booking.findById(args.BookingId).populate('eventId')
-            const event = transformEvent(booking.eventId)
+            const event = await Event.findById(booking.eventId)
             await Booking.deleteOne({ _id: args.BookingId })
-            return event
+            bookedUsers_filtered = event.bookedUsers.filter(user => user.toString() !== req.userId.toString())
+            event.bookedUsers = bookedUsers_filtered
+            await event.save()
+            return transformEvent(event)
         } catch (error) {
             throw error;
         }

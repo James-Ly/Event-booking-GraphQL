@@ -133,26 +133,36 @@ class EventsPage extends Component {
             return res.json()
         }).then(resData => {
             const events = resData.data.events;
-            const bookedEvents = []
-            let createdEvents = []
-            const otherEvents = []
-            events.forEach(event => {
-                if (event.bookedUser) {
-                    bookedEvents.push(event)
-                } else if (event.creator._id === this.context.userId) {
-                    createdEvents.push(event)
-                } else {
-                    otherEvents.push(event)
-                }
-            })
-            if (this.isActive) {
-                this.setState({
-                    ...this.state,
-                    events: otherEvents,
-                    bookedEvents: bookedEvents,
-                    createdEvents: createdEvents,
-                    isLoading: false
+            if (this.context.userId) {
+                const bookedEvents = []
+                let createdEvents = []
+                const otherEvents = []
+                events.forEach(event => {
+                    if (event.bookedUser) {
+                        bookedEvents.push(event)
+                    } else if (event.creator._id === this.context.userId) {
+                        createdEvents.push(event)
+                    } else {
+                        otherEvents.push(event)
+                    }
                 })
+                if (this.isActive) {
+                    this.setState({
+                        ...this.state,
+                        events: otherEvents,
+                        bookedEvents: bookedEvents,
+                        createdEvents: createdEvents,
+                        isLoading: false
+                    })
+                }
+            } else {
+                if (this.isActive) {
+                    this.setState({
+                        ...this.state,
+                        events: events,
+                        isLoading: false
+                    })
+                }
             }
         }).catch(err => {
             console.log(err)

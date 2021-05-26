@@ -97,7 +97,7 @@ class AuthPage extends Component {
                     <input type='password' id='password' ref={this.passwordEl} />
                 </div>
                 <div className='form-actions'>
-                    <button type='submit'>Submit</button>
+                    <button type='submit'>{this.state.isLogin ? 'Login' : 'Signup'}</button>
                     <button type='button' onClick={this.switchModeHandler}>Switch to {this.state.isLogin ? 'Signup' : 'Login'}</button>
                 </div>
             </form>
